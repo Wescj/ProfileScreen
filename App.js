@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, FlatList, Dimensions, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Dimensions, ScrollView, TouchableOpacity} from 'react-native';
 import React, { useEffect, useState } from 'react';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'react-native-image-picker';
+
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -15,43 +17,67 @@ export default function App() {
     {
       username: "Wesley",
       profilePic: 'https://picsum.photos/200/300',
-      images: [],
+      images: ["Default"],
       flist: [1],
     },
     {
       username: "Lance",
       profilePic: 'https://picsum.photos/200/300?random=1',
-      images: [],
+      images: ["Default"],
       flist: [0],
     },
   ]);
   
-  console.log(users)
-
-
-
-
   const renderSmallPf = ({ item }) => (
-    <View style= {styles.subPFContainer}>
+    <TouchableOpacity 
+      style= {styles.subPFContainer}
+      onPress={() => setCurrUser(item)}
+    >
       <Image
       source={{ uri: users[item].profilePic }}
       style={styles.subPFPic}
       />
       <Text style={styles.subPFText}>{users[item].username}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
+
+  const addPhoto = () => {
+    // Launch the image picker
+    ImagePicker.launchImageLibrary(response => {
+      if (!response.didCancel && !response.error) {
+        const newImage = {
+          url: response.uri,
+        };
+
+        const temp = users
+        temp[currUser].images.unshift(newImage)
+        setUsers(temp)
+      }
+    }).catch(error => {
+      console.error("Error occurred while selecting an image:", error);
+    });
+  };
 
   const renderPhoto = ({ item }) => (
-    
-    <Image 
-      source={{ uri: item.url }} 
-      style={{ height: tileSize, width: tileSize }} 
-      // style={styles.gridPhoto}
-    />
-
-
+    item === "default" ? (
+      <Image 
+        source={{ uri: item.url }} 
+        style={{ height: tileSize, width: tileSize }} 
+        // style={styles.gridPhoto}
+      />
+    ) : (
+      <TouchableOpacity 
+      onPress={() => addPhoto()}
+      >
+        <Image 
+          source={require("./assets/dottedButton.webp")} 
+          style={{ height: tileSize, width: tileSize }} 
+        />
+      </TouchableOpacity>
+    )
   );
+  
 
   const renderHeader = () => (
     <View style={{alignItems: 'center'}}>
@@ -79,14 +105,12 @@ export default function App() {
         <FlatList
             data={users[currUser].images}
             renderItem={renderPhoto}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item}
             numColumns={numColumns}
             ListHeaderComponent={renderHeader}
         />
-
       <StatusBar style="auto" />
     </View>
-
   );
 }
 
