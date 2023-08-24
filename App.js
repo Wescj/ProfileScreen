@@ -84,7 +84,7 @@ export default function App() {
         onPress={() => pickImageAsync()}
       >
         <Image 
-          source={require("./assets/dottedButton.webp")} 
+          source={require("./assets/addbutton.png")} 
           style={{ height: tileSize, width: tileSize }} 
         />
       </TouchableOpacity>
@@ -108,7 +108,7 @@ export default function App() {
         <FlatList
           data={users[currUser].flist}
           renderItem={renderSmallPf}
-          keyExtractor={item => item}
+          keyExtractor={(item, index) => index.toString()}
           horizontal
         />
       </View>
@@ -121,7 +121,7 @@ export default function App() {
         <FlatList
             data={users[currUser].images}
             renderItem={renderPhoto}
-            keyExtractor={item => item}
+            keyExtractor={(item, index) => index.toString()}
             numColumns={numColumns}
             ListHeaderComponent={renderHeader}
         />
