@@ -48,12 +48,10 @@ export default function App() {
     });
 
     if (!result.canceled) {
-      // console.log(result.assets[0].uri);
       const newImage = {uri: result.assets[0].uri}
       const temp = [...users]
       temp[currUser].images.unshift(newImage)
       setUsers(temp)
-      // console.log(users)
     } else {
       alert('You did not select any image.');
     }
@@ -66,12 +64,10 @@ export default function App() {
     });
 
     if (!result.canceled) {
-      // console.log(result.assets[0].uri);
       const newImage = {uri: result.assets[0].uri}
       const temp = [...users]
       temp[currUser].profilePic = newImage
       setUsers(temp)
-      // console.log(users)
     } else {
       alert('You did not select any image.');
     }
@@ -82,7 +78,6 @@ export default function App() {
       <Image 
         source={item} 
         style={{ height: tileSize, width: tileSize }} 
-        // style={styles.gridPhoto}
       />
     ) : (
       <TouchableOpacity 
@@ -108,7 +103,6 @@ export default function App() {
       />
       </TouchableOpacity>
       <Text style={styles.pfText}>{users[currUser].username}</Text>
-      <Text style={styles.pfText}>Printing: {users[0].username}</Text>
       <View style = {styles.friendsContainer}>
         <Text style={styles.pfText}>Your Friends</Text>
         <FlatList
@@ -151,9 +145,9 @@ const styles = StyleSheet.create({
   },
 
   pfText:{
-    fontWeight: 'bold', // Make text bold
-    fontSize: 25, // Adjust font size as needed
-    marginVertical: 10, // Add spacing after the FlatList
+    fontWeight: 'bold',
+    fontSize: 25,
+    marginVertical: 10, 
     marginHorizontal: 20
   },
 
@@ -169,24 +163,20 @@ const styles = StyleSheet.create({
   },
 
   subPFText:{
-    // fontWeight: 'bold', // Make text bold
-    fontSize: 15, // Adjust font size as needed
-    marginTop: 10, // Add spacing after the FlatList
+
+    fontSize: 15, 
+    marginTop: 10, 
   },
 
   friendsContainer: {
     height: screenHeight*0.30,
     width: screenWidth,
-    // flexDirection: 'row', // Display items in a row
-    // alignItems: 'center', // Center items vertically
     backgroundColor: '#eeeeee',
     borderRadius: 25,
-    // paddingHorizontal:10, 
+    marginVertical:10,
   },
   imageContainer:{
     flex: 1,
-    // width: '100%',
-    // alignItems: 'row',
   },
   gridPhoto:{
     height: undefined,
