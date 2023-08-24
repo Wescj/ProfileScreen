@@ -1,78 +1,92 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, FlatList} from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Dimensions, ScrollView} from 'react-native';
 import React, { useEffect, useState } from 'react';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 export default function App() {
-  const [images, setImages] = useState([]);
+  const numColumns = 3;
+  const tileSize = screenWidth / numColumns;
+  const [currUser, setCurrUser] = useState(0);
+  const [users, setUsers] = useState([
+    {
+      username: "Wesley",
+      profilePic: 'https://picsum.photos/200/300',
+      images: [],
+      flist: [1],
+    },
+    {
+      username: "Lance",
+      profilePic: 'https://picsum.photos/200/300?random=1',
+      images: [],
+      flist: [0],
+    },
+  ]);
+  
+  console.log(users)
 
-  const addImage = () => {
-    const newImage = {
-      id: images.length + 1,
-      url: `https://picsum.photos/200/300?random=${images.length + 1}`,
-      username: `user`,
-    };
 
-    setImages([...images, newImage]);
-  };
 
-  useEffect(() => {
-    // Load initial images when the component mounts
-    setImages([]);
-    addImage();
-    console.log("Ran image additionsss")
-  }, []);
 
   const renderSmallPf = ({ item }) => (
     <View style= {styles.subPFContainer}>
       <Image
-      source={{ uri: item.url }}
+      source={{ uri: users[item].profilePic }}
       style={styles.subPFPic}
       />
-      <Text style={styles.subPFText}>username {item.username}
+      <Text style={styles.subPFText}>{users[item].username}
       </Text>
     </View>
   );
 
   const renderPhoto = ({ item }) => (
-    <View>
-      <Image
-        source={{ uri: item.url }}
-        style={styles.gridPhoto}
-      />
-    </View>
+    
+    <Image 
+      source={{ uri: item.url }} 
+      style={{ height: tileSize, width: tileSize }} 
+      // style={styles.gridPhoto}
+    />
+
 
   );
 
-  return (
-    <View style={styles.container}>
-      
+  const renderHeader = () => (
+    <View style={{alignItems: 'center'}}>
       <Image
-        source={{ uri: 'https://picsum.photos/200/300' }}
+        source={{ uri: users[currUser].profilePic }}
         style = {styles.profilePic}
       />
-      <Text style={styles.pfText}>Username</Text>
+      <Text style={styles.pfText}>{users[currUser].username}</Text>
+      <Text style={styles.pfText}>Printing: {users[0].username}</Text>
       <View style = {styles.friendsContainer}>
         <Text style={styles.pfText}>Your Friends</Text>
         <FlatList
-          data={images}
+          data={users[currUser].flist}
           renderItem={renderSmallPf}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item}
           horizontal
         />
       </View>
+    </View>
+  );
 
-      <View style={styles.imageContainer}>
+  return (
+
+    <View style={styles.container}>
         <FlatList
-            data={images}
+            data={users[currUser].images}
             renderItem={renderPhoto}
             keyExtractor={item => item.id.toString()}
-            numColumns={3}
+            numColumns={numColumns}
+            ListHeaderComponent={renderHeader}
         />
-        <Text>safsaffs</Text>
-      </View>
+
       <StatusBar style="auto" />
     </View>
+
   );
 }
 
@@ -85,7 +99,7 @@ const styles = StyleSheet.create({
   },
   profilePic: {
     width: undefined,
-    height: "25%",
+    height: screenHeight*0.25,
     aspectRatio: 1, 
     borderRadius: 1000,
   },
@@ -115,7 +129,8 @@ const styles = StyleSheet.create({
   },
 
   friendsContainer: {
-    height: '30%',
+    height: screenHeight*0.30,
+    width: screenWidth,
     // flexDirection: 'row', // Display items in a row
     // alignItems: 'center', // Center items vertically
     backgroundColor: '#eeeeee',
@@ -123,13 +138,14 @@ const styles = StyleSheet.create({
     // paddingHorizontal:10, 
   },
   imageContainer:{
-    width: '100%',
-    alignItems:'center',
+    flex: 1,
+    // width: '100%',
+    // alignItems: 'row',
   },
-
   gridPhoto:{
     height: undefined,
-    width: '50%',
+    width: '33%',
     aspectRatio: 1, 
   }
+
 });
