@@ -1,8 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, FlatList, Dimensions, ScrollView, TouchableOpacity} from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { launchImageLibrary } from 'react-native-image-picker';
-import * as ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 
 
@@ -42,21 +41,17 @@ export default function App() {
     </TouchableOpacity>
   );
 
-  const addPhoto = () => {
-    // Launch the image picker
-    ImagePicker.launchImageLibrary(response => {
-      if (!response.didCancel && !response.error) {
-        const newImage = {
-          url: response.uri,
-        };
-
-        const temp = users
-        temp[currUser].images.unshift(newImage)
-        setUsers(temp)
-      }
-    }).catch(error => {
-      console.error("Error occurred while selecting an image:", error);
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
     });
+
+    if (!result.canceled) {
+      console.log(result);
+    } else {
+      alert('You did not select any image.');
+    }
   };
 
   const renderPhoto = ({ item }) => (
@@ -68,7 +63,7 @@ export default function App() {
       />
     ) : (
       <TouchableOpacity 
-      onPress={() => addPhoto()}
+        onPress={pickImageAsync}
       >
         <Image 
           source={require("./assets/dottedButton.webp")} 
