@@ -15,14 +15,14 @@ export default function App() {
   const [users, setUsers] = useState([
     {
       username: "Wesley",
-      profilePic: 'https://picsum.photos/200/300',
+      profilePic: {uri: 'https://picsum.photos/200/300'},
       images: ["Addphoto"],
       flist: [1],
     },
     {
       username: "Lance",
-      profilePic: 'https://picsum.photos/200/300?random=1',
-      images: ["Default"],
+      profilePic: {uri: 'https://picsum.photos/200/300?random=1'},
+      images: ["Addphoto"],
       flist: [0],
     },
   ]);
@@ -33,7 +33,7 @@ export default function App() {
       onPress={() => setCurrUser(item)}
     >
       <Image
-      source={{ uri: users[item].profilePic }}
+      source={users[item].profilePic}
       style={styles.subPFPic}
       />
       <Text style={styles.subPFText}>{users[item].username}
@@ -53,7 +53,25 @@ export default function App() {
       const temp = [...users]
       temp[currUser].images.unshift(newImage)
       setUsers(temp)
-      console.log(users)
+      // console.log(users)
+    } else {
+      alert('You did not select any image.');
+    }
+  };
+
+  const pickProfileImg = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // console.log(result.assets[0].uri);
+      const newImage = {uri: result.assets[0].uri}
+      const temp = [...users]
+      temp[currUser].profilePic = newImage
+      setUsers(temp)
+      // console.log(users)
     } else {
       alert('You did not select any image.');
     }
@@ -68,9 +86,7 @@ export default function App() {
       />
     ) : (
       <TouchableOpacity 
-        // onPress={() => console.log(item)}
         onPress={() => pickImageAsync()}
-        // onPress={pickImageAsync}
       >
         <Image 
           source={require("./assets/dottedButton.webp")} 
@@ -83,10 +99,14 @@ export default function App() {
 
   const renderHeader = () => (
     <View style={{alignItems: 'center'}}>
+      <TouchableOpacity 
+        onPress={() => pickProfileImg()}
+      >
       <Image
-        source={{ uri: users[currUser].profilePic }}
+        source={ users[currUser].profilePic }
         style = {styles.profilePic}
       />
+      </TouchableOpacity>
       <Text style={styles.pfText}>{users[currUser].username}</Text>
       <Text style={styles.pfText}>Printing: {users[0].username}</Text>
       <View style = {styles.friendsContainer}>
