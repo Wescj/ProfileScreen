@@ -16,7 +16,7 @@ export default function App() {
     {
       username: "Wesley",
       profilePic: 'https://picsum.photos/200/300',
-      images: ["Default"],
+      images: ["Addphoto"],
       flist: [1],
     },
     {
@@ -48,22 +48,29 @@ export default function App() {
     });
 
     if (!result.canceled) {
-      console.log(result);
+      // console.log(result.assets[0].uri);
+      const newImage = {uri: result.assets[0].uri}
+      const temp = [...users]
+      temp[currUser].images.unshift(newImage)
+      setUsers(temp)
+      console.log(users)
     } else {
       alert('You did not select any image.');
     }
   };
 
   const renderPhoto = ({ item }) => (
-    item === "default" ? (
+    item != "Addphoto" ? (
       <Image 
-        source={{ uri: item.url }} 
+        source={item} 
         style={{ height: tileSize, width: tileSize }} 
         // style={styles.gridPhoto}
       />
     ) : (
       <TouchableOpacity 
-        onPress={pickImageAsync}
+        // onPress={() => console.log(item)}
+        onPress={() => pickImageAsync()}
+        // onPress={pickImageAsync}
       >
         <Image 
           source={require("./assets/dottedButton.webp")} 
